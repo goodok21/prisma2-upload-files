@@ -7,7 +7,8 @@ This example shows how to implement a **GraphQL server with an email-password-ba
 ### 1. Clone and install dependecies
 
 ```
-git clone <>
+git clone https://github.com/goodok21/prisma2-upload-files
+cd prisma2-upload-files
 yarn
 ```
 

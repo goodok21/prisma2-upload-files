@@ -5,18 +5,47 @@ import { APP_SECRET, getUserId } from '../utils'
 import { File } from './File'
 import { Upload } from './Upload'
 
-import { lookup } from "mime-types";
+import { lookup } from 'mime-types'
 import { createWriteStream, unlinkSync, statSync } from 'fs'
 import * as mkdirp from 'mkdirp'
 import * as cuid from 'cuid'
 
+import * as tf from '@tensorflow/tfjs-node'
+import * as sharp from 'sharp'
+import { loadImage, createCanvas, Canvas } from 'canvas'
+import * as cocoSsd from '@tensorflow-models/coco-ssd'
+
 const uploadDir = './uploads'
 mkdirp.sync(uploadDir)
 
+const getCanvas = async (path: string) => {
+  const img = await loadImage(path)
+  const { width, height } = await sharp(path).metadata()
+  const canvas = createCanvas(width, height)
+  const ctx = canvas.getContext('2d')
+  ctx.drawImage(img, 0, 0)
+  // @ts-ignore
+  let imgPixel = tf.browser.fromPixels(canvas)
+  return imgPixel
+}
+
+const recognizeImage = async (path: string) => {
+  // Loading model
+  const model = await cocoSsd.load()
+  // Creating a canvas
+  const canvas = await getCanvas(path)
+  // Making prediction
+  const predictions = await model.detect(canvas)
+  // console.log(predictions);
+  model.dispose()
+  canvas.dispose()
+  return predictions
+}
+
 const getFilesizeInBytes = (filename: string) => {
-  const stats = statSync(filename);
-  const fileSizeInBytes = stats.size;
-  return fileSizeInBytes;
+  const stats = statSync(filename)
+  const fileSizeInBytes = stats.size
+  return fileSizeInBytes
 }
 
 const processUpload = async (upload: Promise<any>) => {
@@ -25,19 +54,25 @@ const processUpload = async (upload: Promise<any>) => {
   return await storeUpload({ stream, filename })
 }
 
-const storeUpload = async ({ stream, filename } : { stream: any, filename: any }): Promise<any> => {
+const storeUpload = async ({
+  stream,
+  filename
+}: {
+  stream: any
+  filename: any
+}): Promise<any> => {
   const id = cuid()
   const path = `${uploadDir}/${id}-${filename}`
   return new Promise((resolve, reject) =>
     stream
       .pipe(createWriteStream(path))
       .on('finish', () => resolve({ id, path }))
-      .on('error', reject),
+      .on('error', reject)
   )
 }
 
 const processRemove = async (path: string): Promise<any> => {
-  console.log('Removed file: ', path);
+  console.log('Removed file: ', path)
   try {
     unlinkSync(path)
     return { result: 'Deleted' }
@@ -55,8 +90,9 @@ export const Mutation = mutationType({
       },
       resolve: async (parent, { file }, ctx) => {
         const { id, path, ...other } = await processUpload(file)
-        console.log(path, file);
-        
+        // console.log(path, file);
+        const description = `${JSON.stringify(await recognizeImage(path))}`
+
         return await ctx.photon.files.create({
           data: {
             id,
@@ -64,8 +100,9 @@ export const Mutation = mutationType({
             size: getFilesizeInBytes(path),
             // filename,
             mimetype: `${lookup(path)}`,
-            // encoding
-          },
+            // encoding,
+            description
+          }
         })
       }
     })
@@ -79,10 +116,10 @@ export const Mutation = mutationType({
         await processRemove(path)
         return ctx.photon.files.delete({
           where: {
-            id,
-          },
+            id
+          }
         })
-      },
+      }
     })
 
     t.field('signup', {
@@ -90,7 +127,7 @@ export const Mutation = mutationType({
       args: {
         name: stringArg({ nullable: true }),
         email: stringArg(),
-        password: stringArg(),
+        password: stringArg()
       },
       resolve: async (parent, { name, email, password }, ctx) => {
         const hashedPassword = await hash(password, 10)
@@ -98,27 +135,27 @@ export const Mutation = mutationType({
           data: {
             name,
             email,
-            password: hashedPassword,
-          },
+            password: hashedPassword
+          }
         })
         return {
           token: sign({ userId: user.id }, APP_SECRET),
-          user,
+          user
         }
-      },
+      }
     })
 
     t.field('login', {
       type: 'AuthPayload',
       args: {
         email: stringArg(),
-        password: stringArg(),
+        password: stringArg()
       },
       resolve: async (parent, { email, password }, context) => {
         const user = await context.photon.users.findOne({
           where: {
-            email,
-          },
+            email
+          }
         })
         if (!user) {
           throw new Error(`No user found for email: ${email}`)
@@ -129,16 +166,16 @@ export const Mutation = mutationType({
         }
         return {
           token: sign({ userId: user.id }, APP_SECRET),
-          user,
+          user
         }
-      },
+      }
     })
 
     t.field('createDraft', {
       type: 'Post',
       args: {
         title: stringArg(),
-        content: stringArg({ nullable: true }),
+        content: stringArg({ nullable: true })
       },
       resolve: (parent, { title, content }, ctx) => {
         const userId = getUserId(ctx)
@@ -147,10 +184,10 @@ export const Mutation = mutationType({
             title,
             content,
             published: false,
-            author: { connect: { id: userId } },
-          },
+            author: { connect: { id: userId } }
+          }
         })
-      },
+      }
     })
 
     t.field('deletePost', {
@@ -160,10 +197,10 @@ export const Mutation = mutationType({
       resolve: (parent, { id }, ctx) => {
         return ctx.photon.posts.delete({
           where: {
-            id,
-          },
+            id
+          }
         })
-      },
+      }
     })
 
     t.field('publish', {
@@ -173,9 +210,9 @@ export const Mutation = mutationType({
       resolve: (parent, { id }, ctx) => {
         return ctx.photon.posts.update({
           where: { id },
-          data: { published: true },
+          data: { published: true }
         })
-      },
+      }
     })
-  },
+  }
 })

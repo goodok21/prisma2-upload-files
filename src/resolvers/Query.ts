@@ -27,25 +27,25 @@ export const Query = queryType({
         const userId = getUserId(ctx)
         return ctx.photon.users.findOne({
           where: {
-            id: userId,
-          },
+            id: userId
+          }
         })
-      },
+      }
     })
 
     t.list.field('feed', {
       type: 'Post',
       resolve: (parent, args, ctx) => {
         return ctx.photon.posts.findMany({
-          where: { published: true },
+          where: { published: true }
         })
-      },
+      }
     })
 
     t.list.field('filterPosts', {
       type: 'Post',
       args: {
-        searchString: stringArg({ nullable: true }),
+        searchString: stringArg({ nullable: true })
       },
       resolve: (parent, { searchString }, ctx) => {
         return ctx.photon.posts.findMany({
@@ -53,18 +53,18 @@ export const Query = queryType({
             OR: [
               {
                 title: {
-                  contains: searchString,
-                },
+                  contains: searchString
+                }
               },
               {
                 content: {
-                  contains: searchString,
-                },
-              },
-            ],
-          },
+                  contains: searchString
+                }
+              }
+            ]
+          }
         })
-      },
+      }
     })
 
     t.field('post', {
@@ -74,10 +74,10 @@ export const Query = queryType({
       resolve: (parent, { id }, ctx) => {
         return ctx.photon.posts.findOne({
           where: {
-            id,
-          },
+            id
+          }
         })
-      },
+      }
     })
-  },
+  }
 })

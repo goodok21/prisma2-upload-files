@@ -1,5 +1,4 @@
 import { objectType } from 'nexus'
-// import { GraphQLUpload } from 'graphql-upload'
 
 export const File = objectType({
   name: 'File',
@@ -8,7 +7,6 @@ export const File = objectType({
     t.model.path()
     t.model.size()
     t.model.mimetype()
-  },
+    t.model.description()
+  }
 })
-
-// export const Upload = GraphQLUpload
