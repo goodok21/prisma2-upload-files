@@ -11,12 +11,10 @@ type AuthPayload {
 scalar DateTime
 
 type File {
-  encoding: String
-  filename: String
   id: ID!
-  mimetype: String
+  mimetype: String!
   path: String!
-  size: Int
+  size: Int!
 }
 
 input FileWhereUniqueInput {

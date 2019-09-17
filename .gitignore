@@ -1,5 +1,9 @@
+# Default
 node_modules/
 .DS_Store
 
 # Prisma2
 generated/
+
+# In Project
+uploads/

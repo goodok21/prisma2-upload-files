@@ -1,0 +1,27 @@
+{
+  "version": "0.2.50",
+  "steps": [
+    {
+      "stepType": "DeleteField",
+      "model": "File",
+      "name": "filename"
+    },
+    {
+      "stepType": "DeleteField",
+      "model": "File",
+      "name": "encoding"
+    },
+    {
+      "stepType": "UpdateField",
+      "model": "File",
+      "name": "mimetype",
+      "arity": "required"
+    },
+    {
+      "stepType": "UpdateField",
+      "model": "File",
+      "name": "size",
+      "arity": "required"
+    }
+  ]
+}

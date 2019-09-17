@@ -7,9 +7,7 @@ export const File = objectType({
     t.model.id()
     t.model.path()
     t.model.size()
-    t.model.filename()
     t.model.mimetype()
-    t.model.encoding()
   },
 })
 

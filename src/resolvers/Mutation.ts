@@ -13,19 +13,19 @@ import * as cuid from 'cuid'
 const uploadDir = './uploads'
 mkdirp.sync(uploadDir)
 
-const getFilesizeInBytes = filename => {
+const getFilesizeInBytes = (filename: string) => {
   const stats = statSync(filename);
   const fileSizeInBytes = stats.size;
   return fileSizeInBytes;
 }
 
-const processUpload = async upload => {
+const processUpload = async (upload: Promise<any>) => {
   const { createReadStream, filename, mimetype, encoding } = await upload
   const stream = createReadStream()
   return await storeUpload({ stream, filename })
 }
 
-const storeUpload = async ({ stream, filename }): Promise<any> => {
+const storeUpload = async ({ stream, filename } : { stream: any, filename: any }): Promise<any> => {
   const id = cuid()
   const path = `${uploadDir}/${id}-${filename}`
   return new Promise((resolve, reject) =>
@@ -36,7 +36,7 @@ const storeUpload = async ({ stream, filename }): Promise<any> => {
   )
 }
 
-const processRemove = async (path): Promise<any> => {
+const processRemove = async (path: string): Promise<any> => {
   console.log('Removed file: ', path);
   try {
     unlinkSync(path)
@@ -63,7 +63,7 @@ export const Mutation = mutationType({
             path,
             size: getFilesizeInBytes(path),
             // filename,
-            mimetype: lookup(path),
+            mimetype: `${lookup(path)}`,
             // encoding
           },
         })
