@@ -1,0 +1,15 @@
+{
+  "version": "0.2.50",
+  "steps": [
+    {
+      "stepType": "CreateField",
+      "model": "File",
+      "name": "size",
+      "type": {
+        "Base": "Int"
+      },
+      "arity": "required",
+      "isUnique": false
+    }
+  ]
+}

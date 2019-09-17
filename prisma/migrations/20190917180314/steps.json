@@ -1,0 +1,29 @@
+{
+  "version": "0.2.50",
+  "steps": [
+    {
+      "stepType": "UpdateField",
+      "model": "File",
+      "name": "filename",
+      "arity": "optional"
+    },
+    {
+      "stepType": "UpdateField",
+      "model": "File",
+      "name": "mimetype",
+      "arity": "optional"
+    },
+    {
+      "stepType": "UpdateField",
+      "model": "File",
+      "name": "encoding",
+      "arity": "optional"
+    },
+    {
+      "stepType": "UpdateField",
+      "model": "File",
+      "name": "size",
+      "arity": "optional"
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "version": "0.2.50",
+  "steps": [
+    {
+      "stepType": "CreateModel",
+      "name": "File",
+      "embedded": false
+    },
+    {
+      "stepType": "CreateField",
+      "model": "File",
+      "name": "id",
+      "type": {
+        "Base": "String"
+      },
+      "arity": "required",
+      "isUnique": false,
+      "id": {
+        "strategy": "Auto",
+        "sequence": null
+      },
+      "default": {
+        "Expression": [
+          "cuid",
+          "String",
+          []
+        ]
+      }
+    },
+    {
+      "stepType": "CreateField",
+      "model": "File",
+      "name": "path",
+      "type": {
+        "Base": "String"
+      },
+      "arity": "required",
+      "isUnique": false
+    },
+    {
+      "stepType": "CreateField",
+      "model": "File",
+      "name": "filename",
+      "type": {
+        "Base": "String"
+      },
+      "arity": "required",
+      "isUnique": false
+    },
+    {
+      "stepType": "CreateField",
+      "model": "File",
+      "name": "mimetype",
+      "type": {
+        "Base": "String"
+      },
+      "arity": "required",
+      "isUnique": false
+    },
+    {
+      "stepType": "CreateField",
+      "model": "File",
+      "name": "encoding",
+      "type": {
+        "Base": "String"
+      },
+      "arity": "required",
+      "isUnique": false
+    }
+  ]
+}
